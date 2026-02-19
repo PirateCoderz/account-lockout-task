@@ -1,7 +1,7 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import { connectDB } from "@/lib/db";
+import connectDB from "@/lib/db";
 import User from "@/models/User";
 
 const MAX_FAILED_ATTEMPTS = 3;
@@ -62,7 +62,7 @@ export const authOptions: NextAuthOptions = {
                     await user.save();
                     const remaining = MAX_FAILED_ATTEMPTS - user.failedLoginAttempts;
                     throw new Error(
-                        `Invalid password. ${remaining} attempt(s) remaining before lockout.`
+                        `Invalid password. ${remaining} attempt(s) remaining.`
                     );
                 }
 

@@ -1,57 +1,226 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
+import { FiMenu, FiX, FiChevronDown } from "react-icons/fi";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+const menuLinks = [
+  { label: "HOME", href: "/" },
+  { label: "ABOUT", href: "/about" },
+  { 
+    label: "WIDGETS", 
+    href: "/widgets",
+    dropdown: [
+      { label: "Widget 1", href: "/widgets/widget-1" },
+      { label: "Widget 2", href: "/widgets/widget-2" },
+      { label: "Widget 3", href: "/widgets/widget-3" },
+    ]
+  },
+  { 
+    label: "TEMPLATES", 
+    href: "/templates",
+    dropdown: [
+      { label: "Template 1", href: "/templates/template-1" },
+      { label: "Template 2", href: "/templates/template-2" },
+      { label: "Template 3", href: "/templates/template-3" },
+    ]
+  },
+  { 
+    label: "SHORTCODES", 
+    href: "/shortcodes",
+    dropdown: [
+      { label: "Shortcode 1", href: "/shortcodes/shortcode-1" },
+      { label: "Shortcode 2", href: "/shortcodes/shortcode-2" },
+      { label: "Shortcode 3", href: "/shortcodes/shortcode-3" },
+    ]
+  },
+  { label: "BLOG", href: "/blog" },
+  { label: "CONTACT", href: "/contact" },
+  { label: "PURCHASE", href: "/purchase" },
+];
 
 export default function Topbar() {
     const { data: session } = useSession();
+    const [showMobileMenu, setShowMobileMenu] = useState(false);
+
+    const closeMenu = () => setShowMobileMenu(false);
 
     return (
-        <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-200/60 shadow-sm">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex items-center justify-between h-16">
-                    {/* Logo */}
-                    <Link href="/" className="flex items-center gap-2">
-                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-500/25">
-                            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                            </svg>
-                        </div>
-                        <span className="text-xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
-                            SecureAuth
-                        </span>
-                    </Link>
+        <nav className="fixed top-0 left-0 w-full bg-transparent text-white shadow-lg z-50">
+            {/* Mobile Top Bar */}
+            <div className="lg:hidden flex items-center justify-between px-4 py-3">
+                <button 
+                    onClick={() => setShowMobileMenu(true)} 
+                    className="flex items-center gap-1"
+                    aria-label="Open navigation menu"
+                >
+                    <FiMenu size={22} />
+                    <span className="text-xs">Menu</span>
+                </button>
 
-                    {/* Nav */}
-                    <div className="flex items-center gap-4">
-                        {session ? (
-                            <>
-                                <div className="flex items-center gap-2">
-                                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white text-sm font-semibold shadow-md">
-                                        {session.user?.name?.charAt(0).toUpperCase() || "U"}
-                                    </div>
-                                    <span className="text-sm font-medium text-slate-700 hidden sm:block">
-                                        {session.user?.name}
-                                    </span>
-                                </div>
-                                <button
-                                    onClick={() => signOut({ callbackUrl: "/signin" })}
-                                    className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-red-500 to-rose-600 rounded-xl hover:from-red-600 hover:to-rose-700 transition-all duration-200 shadow-md shadow-red-500/25"
-                                >
-                                    Sign Out
-                                </button>
-                            </>
-                        ) : (
-                            <>
-                                <Link href="/signin" className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-emerald-600 transition-colors">
-                                    Sign In
-                                </Link>
-                                <Link href="/signup" className="px-5 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl hover:from-emerald-600 hover:to-teal-700 transition-all duration-200 shadow-lg shadow-emerald-500/25">
-                                    Sign Up
-                                </Link>
-                            </>
-                        )}
+                <div className="text-xl font-bold">
+                    <Link href="/">StartUp</Link>
+                </div>
+
+                {session && (
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white text-sm font-semibold shadow-md">
+                        {session.user?.name?.charAt(0).toUpperCase() || "U"}
                     </div>
+                )}
+            </div>
+
+            {/* Mobile Overlay */}
+            {showMobileMenu && (
+                <div 
+                    className="fixed inset-0 bg-black/20 z-40 lg:hidden" 
+                    onClick={closeMenu}
+                />
+            )}
+
+            {/* Mobile Menu */}
+            <nav 
+                className={`fixed top-0 right-0 h-full w-64 bg-white text-white z-50 transform transition-transform duration-300 overflow-y-auto ${
+                    showMobileMenu ? "translate-x-0" : "translate-x-full"
+                }`}
+            >
+                <div className="flex items-center justify-between px-4 py-4 bg-emerald-500 text-white">
+                    <h2 className="font-semibold text-lg">Menu</h2>
+                    <button onClick={closeMenu} aria-label="Close navigation menu">
+                        <FiX size={26} />
+                    </button>
+                </div>
+                <ul className="space-y-1 py-2">
+                    {menuLinks.map((item) => (
+                        <li key={item.label}>
+                            {item.dropdown ? (
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <button className="flex items-center justify-between w-full px-4 py-3 hover:bg-gray-100 outline-none text-white">
+                                            <span>{item.label}</span>
+                                            <FiChevronDown size={16} />
+                                        </button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="start" className="w-56">
+                                        {item.dropdown.map((subItem) => (
+                                            <DropdownMenuItem key={subItem.label} asChild>
+                                                <Link
+                                                    href={subItem.href}
+                                                    className="cursor-pointer"
+                                                    onClick={closeMenu}
+                                                >
+                                                    {subItem.label}
+                                                </Link>
+                                            </DropdownMenuItem>
+                                        ))}
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            ) : (
+                                <Link
+                                    href={item.href}
+                                    className="block w-full px-4 py-3 hover:bg-gray-100 text-gray-200"
+                                    onClick={closeMenu}
+                                >
+                                    {item.label}
+                                </Link>
+                            )}
+                        </li>
+                    ))}
+                    {session && (
+                        <li className="border-t pt-2 mt-2">
+                            <button
+                                onClick={() => {
+                                    signOut({ callbackUrl: "/signin" });
+                                    closeMenu();
+                                }}
+                                className="block w-full px-4 py-3 text-left text-red-600 hover:bg-gray-100"
+                            >
+                                Sign Out
+                            </button>
+                        </li>
+                    )}
+                </ul>
+            </nav>
+
+            {/* Desktop Navbar */}
+            <div className="hidden lg:flex justify-between items-center px-6 py-3">
+                <Link href="/" className="flex items-center gap-2">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center">
+                        <span className="text-white font-bold text-lg">S</span>
+                    </div>
+                    <span className="text-xl font-bold text-gray-200">StartUp</span>
+                </Link>
+
+                <div className="flex gap-1 items-center">
+                    {menuLinks.map((item) => (
+                        item.dropdown ? (
+                            <DropdownMenu key={item.label}>
+                                <DropdownMenuTrigger asChild>
+                                    <button className="flex items-center gap-1 px-4 py-2 hover:text-emerald-500 transition-colors text-sm font-medium outline-none">
+                                        {item.label}
+                                        <FiChevronDown size={14} />
+                                    </button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="start" className="min-w-[200px] bg-black/50 text-white">
+                                    {item.dropdown.map((subItem) => (
+                                        <DropdownMenuItem key={subItem.label} asChild>
+                                            <Link
+                                                href={subItem.href}
+                                                className="cursor-pointer"
+                                            >
+                                                {subItem.label}
+                                            </Link>
+                                        </DropdownMenuItem>
+                                    ))}
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        ) : (
+                            <Link
+                                key={item.label}
+                                href={item.href}
+                                className="flex items-center gap-1 px-4 py-2 hover:text-emerald-500 transition-colors text-sm font-medium"
+                            >
+                                {item.label}
+                            </Link>
+                        )
+                    ))}
+                </div>
+
+                {/* Profile & Sign Out */}
+                <div className="flex items-center gap-4">
+                    {session ? (
+                        <>
+                            <div className="flex items-center gap-2">
+                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white text-sm font-semibold shadow-md">
+                                    {session.user?.name?.charAt(0).toUpperCase() || "U"}
+                                </div>
+                                <span className="text-sm font-medium text-slate-200">
+                                    {session.user?.name}
+                                </span>
+                            </div>
+                            <button
+                                onClick={() => signOut({ callbackUrl: "/signin" })}
+                                className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-red-500 to-rose-600 rounded-xl hover:from-red-600 hover:to-rose-700 transition-all duration-200 shadow-md"
+                            >
+                                Sign Out
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <Link href="/signin" className="px-4 py-2 text-sm font-medium text-slate-100 hover:text-emerald-600 transition-colors">
+                                Sign In
+                            </Link>
+                            <Link href="/signup" className="px-5 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl hover:from-emerald-600 hover:to-teal-700 transition-all duration-200 shadow-lg">
+                                Sign Up
+                            </Link>
+                        </>
+                    )}
                 </div>
             </div>
         </nav>
