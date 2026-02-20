@@ -86,7 +86,7 @@ export default function Topbar() {
 
             {/* Mobile Menu */}
             <nav 
-                className={`fixed top-0 right-0 h-full w-64 bg-white text-white z-50 transform transition-transform duration-300 overflow-y-auto ${
+                className={`fixed top-0 right-0 h-full w-64 bg-white text-[#161616] z-50 transform transition-transform duration-300 overflow-y-auto ${
                     showMobileMenu ? "translate-x-0" : "translate-x-full"
                 }`}
             >
@@ -102,7 +102,7 @@ export default function Topbar() {
                             {item.dropdown ? (
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
-                                        <button className="flex items-center justify-between w-full px-4 py-3 hover:bg-gray-100 outline-none text-white">
+                                        <button className="flex items-center justify-between w-full px-4 py-3 hover:bg-gray-100 outline-none text-[#161616] sm:text-[#c1c1c1]">
                                             <span>{item.label}</span>
                                             <FiChevronDown size={16} />
                                         </button>
@@ -124,7 +124,7 @@ export default function Topbar() {
                             ) : (
                                 <Link
                                     href={item.href}
-                                    className="block w-full px-4 py-3 hover:bg-gray-100 text-gray-200"
+                                    className="block w-full px-4 py-3 hover:bg-gray-100 text-[#161616] sm:text-[#c1c1c1]"
                                     onClick={closeMenu}
                                 >
                                     {item.label}
